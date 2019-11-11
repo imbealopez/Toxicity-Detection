@@ -1,6 +1,10 @@
 #%%
 #!/usr/bin/python
 # essential imports
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import warnings  # Ignore warnings
 
 warnings.filterwarnings("ignore")
@@ -9,13 +13,16 @@ import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 import re  # regular expressions
 import math  # math functions
+import scipy.stats as stats
 import random  # random numbers and generator
 import copy  # copy objects
 import pickle  # copy objects into binary files
 import timeit  # timer
 import os  # system functions
 import sys
-
+import datetime
+import pkg_resources
+#import seaborn as sns
 import matplotlib.pyplot as plt  # plotting tool
 
 #%matplotlib inline
@@ -85,7 +92,7 @@ train_path = os.path.join(cwd, "data", "train.csv")
 # sample_submission = pd.read_csv(sample_path) #sample submission format with id and prediction
 # test_comments = pd.read_csv(test_path) #test comments with id and comment
 train_comments = pd.read_csv(train_path)  # train comments with multiple attributes
-
+print('loaded %d records' % len(train_comments))
 #%%
 # display head
 train_comments.head()
@@ -96,22 +103,53 @@ train_comments[train_comments["target"] >= 0.5].head()
 # shuffle
 #train_comments = train_comments.sample(frac=1).reset_index(drop=True)
 
+
+# %%
+# TODO test preprocessing
+
+# Make sure all comment_text values are strings
+train_comments['comment_text'] = train_comments['comment_text'].astype(str) 
+
+# List all identities
+identity_columns = [
+    'male', 'female', 'homosexual_gay_or_lesbian', 'christian', 'jewish',
+    'muslim', 'black', 'white', 'psychiatric_or_mental_illness']
+
+# Convert taget and identity columns to booleans
+def convert_to_bool(df, col_name):
+    df[col_name] = np.where(df[col_name] >= 0.5, True, False)
+    #df.loc[df.col_name >= 0.5, col_name] = True
+    #df.loc[df.col_name < 0.5, col_name] = False   
+def convert_dataframe_to_bool(df):
+    bool_df = df.copy()
+    for col in ['target'] + identity_columns:
+        convert_to_bool(bool_df, col)
+    return bool_df
+
+train_comments = convert_dataframe_to_bool(train_comments)
+
+#train_comments.loc[:, "comment_text"] = train_comments.comment_text.apply(cleanUp)
+
+
+
+
+# %%
 # comment-target split
 full_labels = train_comments.iloc[:]["target"].copy()
 full_comments = train_comments[["comment_text"]].copy()
 print(full_labels.head())
 print(full_comments.head())
 
-
-# %%
 # split train into training-evaluation set 80%-20%
-x_train, x_eval, y_train, y_eval = train_test_split(
-    full_comments, full_labels, test_size=0.2, random_state=42, shuffle=False
-)
+# x_train, x_eval, y_train, y_eval = train_test_split(
+#     full_comments, full_labels, test_size=0.2, random_state=42, shuffle=False
+# )
 # array form
 # x_train.values
-# %%
-# TODO test preprocessing
-#x_train.loc[:, "comment_text"] = x_train.comment_text.apply(cleanUp)
-#x_val.loc[:, "comment_text"] = x_val.comment_text.apply(cleanUp)
+
+train_df, validate_df = train_test_split(
+    train_comments, test_size=0.2, random_state=42, shuffle=False
+)
+
+print('%d train comments, %d validate comments' % (len(train_df), len(validate_df)))
 
