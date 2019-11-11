@@ -1,0 +1,45 @@
+# Created by https://www.gitignore.io/api/visualstudiocode,jupyternotebooks
+# Edit at https://www.gitignore.io/?templates=visualstudiocode,jupyternotebooks
+
+### JupyterNotebooks ###
+# gitignore template for Jupyter Notebooks
+# website: http://jupyter.org/
+
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Remove previous ipynb_checkpoints
+#   git rm -r .ipynb_checkpoints/
+#
+
+### VisualStudioCode ###
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
+# End of https://www.gitignore.io/api/visualstudiocode,jupyternotebooks
+*.code-workspace
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+### Custom ###
+# ignores data contents for storage space
+
+# data can be downloaded from kaggle into the directory below 
+jigsaw-unintended-bias-in-toxicity-classification.zip
+/data/sample_submission.csv
+/data/test.csv
+/data/train.csv
+#use your kaggle.json API under your kaggle account
+kaggle.json
