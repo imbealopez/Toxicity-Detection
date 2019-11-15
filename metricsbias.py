@@ -52,11 +52,13 @@ def compute_bias_metrics_for_model(dataset,
         records.append(record)
     return pd.DataFrame(records).sort_values('subgroup_auc', ascending=True)
 
+#uncomment to show only bias metric
 #bias_metrics_df = compute_bias_metrics_for_model(validate_df, identity_columns, MODEL_NAME, TOXICITY_COLUMN)
 #bias_metrics_df
 
-TOXICITY_COLUMN = 'target'
+#NOTE use bettermetric.py for below method
 #calculate final score
+TOXICITY_COLUMN = 'target'
 def calculate_overall_auc(df, model_name):
     true_labels = df[TOXICITY_COLUMN]
     predicted_labels = df[model_name]
@@ -73,5 +75,5 @@ def get_final_metric(bias_df, overall_auc, POWER=-5, OVERALL_MODEL_WEIGHT=0.25):
         power_mean(bias_df[BNSP_AUC], POWER)
     ])
     return (OVERALL_MODEL_WEIGHT * overall_auc) + ((1 - OVERALL_MODEL_WEIGHT) * bias_score)
-    
+#uncomment to show overall metric    
 #get_final_metric(bias_metrics_df, calculate_overall_auc(validate_df, MODEL_NAME))

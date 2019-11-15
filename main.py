@@ -22,7 +22,8 @@ import os  # system functions
 import sys
 import datetime
 import pkg_resources
-#import seaborn as sns
+
+# import seaborn as sns
 import matplotlib.pyplot as plt  # plotting tool
 
 #%matplotlib inline
@@ -58,6 +59,12 @@ import torch
 # tensorflow
 # import tensorflow as tf
 # print(tf.__version__)
+
+# evaluation metrics
+import metricsbias  # bias metrics
+from metricsoverall import JigsawEvaluator  # overall metrics
+
+
 # pd options
 # pd.set_option("display.max_columns", 500)
 # pd.set_option("display.max_rows", 500)
@@ -92,7 +99,7 @@ train_path = os.path.join(cwd, "data", "train.csv")
 # sample_submission = pd.read_csv(sample_path) #sample submission format with id and prediction
 # test_comments = pd.read_csv(test_path) #test comments with id and comment
 train_comments = pd.read_csv(train_path)  # train comments with multiple attributes
-print('loaded %d records' % len(train_comments))
+print("loaded %d records" % len(train_comments))
 #%%
 # display head
 train_comments.head()
@@ -101,36 +108,49 @@ train_comments.iloc[0]["comment_text"]
 # display toxic comments above target 0.5
 train_comments[train_comments["target"] >= 0.5].head()
 # shuffle
-#train_comments = train_comments.sample(frac=1).reset_index(drop=True)
+# train_comments = train_comments.sample(frac=1).reset_index(drop=True)
 
 
 # %%
 # TODO test preprocessing
 
 # Make sure all comment_text values are strings
-train_comments['comment_text'] = train_comments['comment_text'].astype(str) 
+train_comments["comment_text"] = train_comments["comment_text"].astype(str)
 
+# toxicity score column
+TOXICITY_COLUMN = "target"
+# text comment column
+TEXT_COLUMN = "comment_text"
 # List all identities
 identity_columns = [
-    'male', 'female', 'homosexual_gay_or_lesbian', 'christian', 'jewish',
-    'muslim', 'black', 'white', 'psychiatric_or_mental_illness']
+    "male",
+    "female",
+    "homosexual_gay_or_lesbian",
+    "christian",
+    "jewish",
+    "muslim",
+    "black",
+    "white",
+    "psychiatric_or_mental_illness",
+]
 
 # Convert taget and identity columns to booleans
 def convert_to_bool(df, col_name):
     df[col_name] = np.where(df[col_name] >= 0.5, True, False)
-    #df.loc[df.col_name >= 0.5, col_name] = True
-    #df.loc[df.col_name < 0.5, col_name] = False   
+    # df.loc[df.col_name >= 0.5, col_name] = True
+    # df.loc[df.col_name < 0.5, col_name] = False
+
+
 def convert_dataframe_to_bool(df):
     bool_df = df.copy()
-    for col in ['target'] + identity_columns:
+    for col in ["target"] + identity_columns:
         convert_to_bool(bool_df, col)
     return bool_df
 
+
 train_comments = convert_dataframe_to_bool(train_comments)
 
-#train_comments.loc[:, "comment_text"] = train_comments.comment_text.apply(cleanUp)
-
-
+# train_comments.loc[:, "comment_text"] = train_comments.comment_text.apply(cleanUp)
 
 
 # %%
@@ -151,5 +171,39 @@ train_df, validate_df = train_test_split(
     train_comments, test_size=0.2, random_state=42, shuffle=False
 )
 
-print('%d train comments, %d validate comments' % (len(train_df), len(validate_df)))
+print("%d train comments, %d validate comments" % (len(train_df), len(validate_df)))
+
+#%%
+# TODO setup and run model
+MODEL_NAME = "my_model"
+# validate_df[MODEL_NAME] = model.predict(pad_text(validate_df[TEXT_COLUMN], tokenizer))[:, 1]
+# %%
+# TODO test evaluation
+
+# target and subgroup columns
+identity_columns = [
+    "male",
+    "female",
+    "homosexual_gay_or_lesbian",
+    "christian",
+    "jewish",
+    "muslim",
+    "black",
+    "white",
+    "psychiatric_or_mental_illness",
+]
+y_true = validate_df["target"].values
+y_identity = validate_df[identity_columns].values
+
+# predict
+# TODO add model
+# y_pred = model.predict_proba(train_df)
+
+# evaluate
+# evaluator = JigsawEvaluator(y_true, y_identity)
+# auc_score = evaluator.get_final_metric(y_pred)
+
+# uncomment to show only bias metric
+# bias_metrics_df = compute_bias_metrics_for_model(validate_df, identity_columns, MODEL_NAME, TOXICITY_COLUMN)
+# bias_metrics_df
 
