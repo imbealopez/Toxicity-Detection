@@ -90,9 +90,8 @@ try:
     cwd = os.path.dirname(os.path.abspath(__file__))
 except:
     cwd = os.getcwd()
-
-# sample_path = os.path.join(cwd, "data", "sample_submission.csv")
-# test_path = os.path.join(cwd, "data", "test.csv")
+# test_private_path = os.path.join(cwd, "data", "test_private_expanded.csv")
+# test_public_path = os.path.join(cwd, "data", "test_public_expanded.csv")
 train_path = os.path.join(cwd, "data", "train.csv")
 
 
@@ -147,7 +146,7 @@ def convert_dataframe_to_bool(df):
         convert_to_bool(bool_df, col)
     return bool_df
 
-
+#%%
 train_comments = convert_dataframe_to_bool(train_comments)
 
 # train_comments.loc[:, "comment_text"] = train_comments.comment_text.apply(cleanUp)
