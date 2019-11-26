@@ -38,8 +38,6 @@ __pycache__/
 
 # data can be downloaded from kaggle into the directory below 
 jigsaw-unintended-bias-in-toxicity-classification.zip
-/data/sample_submission.csv
-/data/test.csv
-/data/train.csv
+/data/*
 #use your kaggle.json API under your kaggle account
 kaggle.json
